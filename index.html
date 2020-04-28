@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>国际化翻译工具</title>
+    <link rel="stylesheet" href="layout.css">
+  </head>
+  <body>
+    <!-- <h1>国际化翻译工具</h1>
+    <hr> -->
+    <div class="flex">
+      
+      <aside>
+        <h2>模块名称</h2>
+        <ul>
+          <li><a href="">公共字段</a></li>
+          <li>看板</li>
+        </ul>
+      </aside>
+      <main>
+        <h2> &gt; 公共字段</h2>
+        <div class="keyv">
+          <dl>
+            <dt>key: <em>switchLang</em></dt>
+            <dd>
+              <p>
+                <label for="">中文</label>
+                <textarea>语言切换成功</textarea>
+              </p>
+              <p>
+                <label for="">英文</label>
+                <textarea>Language changed successfully</textarea>
+              </p>
+            </dd>
+          </dl>
+        </div>
+      </main>
+    </div>
+
+    <div class="tools">
+      
+      <label>导入语言包文件</label><br>
+      <input type="file" value="请选择" name="选择" placeholder="请"><br>
+      <label for="">en</label>
+      <input type="radio" value="en" name="lang" id="">
+      <label for="">cn</label>
+      <input type="radio" value="cn" name="lang" id=""><br>
+      <input type="submit" value="确定">
+      <div id="holder">
+        Drag your file here
+      </div>
+      <button class="btn-green">导出</button>
+    </div>
+   
+    <footer>
+      Node.js <span id="node-version"></span>,
+      Chromium <span id="chrome-version"></span>,
+      Electron <span id="electron-version"></span>.
+    </footer>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+    <!-- <script>
+      // document.addEventListener('drop', (e) => {
+      //   console.log(e)
+      //   e.preventDefault();
+      //   e.stopPropagation();
+
+      //   for (const f of e.dataTransfer.files) {
+      //     console.log('File(s) you dragged here: ', f.path)
+      //   }
+      // });
+      // document.addEventListener('dragover', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      // });
+    </script> -->
+  </body>
+</html>
