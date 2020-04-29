@@ -1,24 +1,23 @@
 <template>
-  <section>
+  <section class="main">
     <div class="side">
-      <aside>
-        <h4>导入语言包文件</h4>
-        <div class="entry">
-          
-          <div class="select-file">
-            <input class="input-file" @change="entryFile" type="file" name="导入">
-            <button>选择文件</button>
-          </div>
+      <div class="logo">
+        <img width="64" src="~@/assets/logo.png" alt="electron-vue">
+        <h1>可视化翻译</h1>
+      </div>
+      <h4>导入语言包</h4>
+      <div class="entry">
+        <div class="select-file">
+          <input class="input-file" @change="entryFile" type="file" name="导入">
+          <button>+ 选择文件</button>
         </div>
-      </aside>
+      </div>
       <br>
       <br>
       <br>
       <br>
-      <aside>
-        <h4>导出</h4>
-        <button @click="exportLang">导出</button>
-      </aside>
+      <h4>导出</h4>
+      <button @click="exportLang">导出</button>
     </div>
     <article>
       <!-- <h2>SenseGuard i18n-tools</h2> -->
@@ -140,7 +139,18 @@
 </script>
 
 <style lang="scss" scoped>
-
+.main{
+  position: relative;
+  height: 100%;
+}
+.logo{
+  text-align: center;
+  h1{
+    font-size: 14px;
+    color: #999;
+  }
+  padding: 20px 0;
+}
 ul{list-style: none;}
 .entry{
   input{
@@ -162,18 +172,39 @@ ul{list-style: none;}
   }
 }
 .side{
-  width: 220px;
-  padding: 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200px;
+  padding: 20px;
+  background: #f3f3f9;
+  border-right: 1px solid #eee;
+  button{
+    width: 100%;
+    border-radius: 5em;
+    padding: .5em;
+  }
+  .entry{
+    button{
+      background: transparent;
+      color: #118bee;
+    }
+  }
+  
   aside{
     width: 100%;
     margin: 0;
   }
+  height: 100%;
+  z-index: 1;
 }
 article{
   flex: 1;
   display: flex;
   justify-content: space-around;
-  padding: 10px;
+  padding: 10px 10px 10px 210px;
+  height: 100%;
+  overflow-y: auto;
 }
 .title {
   color: #888;
@@ -187,6 +218,11 @@ dt{
 }
 .kv{
   width: 50%;
+  &:first{
+    h3{
+      border-right: 1px solid #ccc;
+    }
+  }
   h3{
     padding: 4px;
   }
@@ -207,6 +243,7 @@ dt{
     }
     dd{
       padding-bottom: 10px;
+      padding-right: 10px;
       &>div{
         display: flex;
         label{

@@ -26,6 +26,8 @@ function createWindow () {
     height: 563,
     useContentSize: true,
     width: 1000
+    // titleBarStyle: 'hiddenInset'
+    // frame: false, // 去除默认窗口栏
   })
 
   mainWindow.loadURL(winURL)

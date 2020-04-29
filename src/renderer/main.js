@@ -18,24 +18,24 @@ Vue.directive('tresize', {
     let className = ''
     // console.log(className)
     function get () {
-      const style = document.defaultView.getComputedStyle(el);
+      const style = document.defaultView.getComputedStyle(el)
       // console.log(style)
       if (width !== style.width || height !== style.height) {
-        className = el.classList[0];
-        binding.value({width, height, className});
+        className = el.classList[0]
+        binding.value({width, height, className})
         // console.log(el.classList)
       }
-      width = style.width;
-      height = style.height;
-      className = style.className;
+      width = style.width
+      height = style.height
+      className = style.className
     }
 
-    el.__vueReize__ = setInterval(get, 400);
+    el.__vueReize__ = setInterval(get, 400)
   },
   unbind (el) {
-    clearInterval(el.__vueReize__);
+    clearInterval(el.__vueReize__)
   }
-});
+})
 
 /* eslint-disable no-new */
 new Vue({

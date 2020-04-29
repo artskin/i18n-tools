@@ -444,7 +444,10 @@ blockquote footer {
 }
 
 /* Custom styles */
-
+html,body,#app{
+    height: 100%;
+}
 body{
     /* background-color: #043169; */
+    padding: 0;
 }
