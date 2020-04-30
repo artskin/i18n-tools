@@ -24,7 +24,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     nodeIntegration: false,
     webSecurity: false,
-    icon: './build/icons/icon.ico',
+    //icon: './build/icons/icon.ico',
+    icon: './static/icon.png',
     height: 563,
     useContentSize: true,
     width: 1000

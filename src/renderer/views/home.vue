@@ -2,7 +2,7 @@
   <div class="main">
     <div class="side">
       <div class="logo">
-        <img width="64" src="~@/assets/logo.png" alt="electron-vue">
+        <img width="64" src="~@/assets/logo.svg" alt="electron-vue">
         <h1>可视化翻译</h1>
       </div>
       <h4></h4>
@@ -65,7 +65,6 @@
         </dl>
       </div>
       </section>
-      
     </div>
   </div>
 </template>
@@ -210,7 +209,7 @@ ul{list-style: none;}
   width: 200px;
   height: 100%;
   padding: 20px;
-  background: #f3f3f9;
+  background: #f0f0f0;
   border-right: 1px solid #eee;
   button{
     width: 100%;
@@ -240,14 +239,15 @@ ul{list-style: none;}
   height: 100%;
   .main-heade{
     display: flex;
-    box-shadow: 0 0 10px rgba(0,0,0,.2);
+    box-shadow: 2px 3px 3px rgba(0,0,0,.1);
+    border-bottom: 1px solid #ddd;
     position: relative;
     z-index: 999;
+    background: #f0f0f0;
     h3{
       width: calc(50% - 9px);
       height: 30px;
       line-height: 30px;
-      background: #f3f3f9;
       font-size: 14px;
       box-sizing: border-box;
       text-indent: 10px;
@@ -314,7 +314,7 @@ ul{list-style: none;}
   }
   
   textarea{
-    width: 88%;
+    width: 94%;
     resize: vertical;
     transition: height .1s;
     font-size: 12px;
