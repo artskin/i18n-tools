@@ -32,25 +32,6 @@ let rendererConfig = {
   module: {
     rules: [
       {
-        test: /\.(js|vue)$/,
-        enforce: 'pre',
-        exclude: /node_modules/,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            formatter: require('eslint-friendly-formatter')
-          }
-        }
-      },
-      {
-        test: /\.scss$/,
-        use: ['vue-style-loader', 'css-loader', 'sass-loader']
-      },
-      {
-        test: /\.sass$/,
-        use: ['vue-style-loader', 'css-loader', 'sass-loader?indentedSyntax']
-      },
-      {
         test: /\.less$/,
         use: ['vue-style-loader', 'css-loader', 'less-loader']
       },
@@ -125,7 +106,7 @@ let rendererConfig = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
-	  templateParameters(compilation, assets, options) {
+      templateParameters(compilation, assets, options) {
         return {
           compilation: compilation,
           webpack: compilation.getStats().toJson(),

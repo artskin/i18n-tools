@@ -2,6 +2,8 @@
 
 import { app, BrowserWindow } from 'electron'
 
+const { ipcMain } = require('electron')
+const dialog = require('electron').dialog;
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -12,7 +14,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
+  ? `http://localhost:9060`
   : `file://${__dirname}/index.html`
 
 function createWindow () {
@@ -50,7 +52,25 @@ app.on('activate', () => {
     createWindow()
   }
 })
+// 监听asynchronous-message，接收渲染进程发送的消息
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  // 回复消息
+  
+  event.sender.send('asynchronous-reply', 'pong')
+})
+// 监听synchronous-message，接收渲染进程发送的消息
+ipcMain.on('synchronous-message', (event, arg) => {
+  //console.log(event) // prints "ping"
 
+  dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]},(path)=>{
+    //console.log(path)
+    event.sender.send('synchronous-reply', path)
+  })
+  event.sender.send('synchronous-reply', 'pong')
+  // 返回的值
+  event.returnValue = 'pong'
+})
 /**
  * Auto Updater
  *

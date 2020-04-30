@@ -7,9 +7,9 @@ import store from './store'
 import './assets/mvp.css'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'// 隐藏开发模式console安全告警
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
+
 
 Vue.directive('tresize', {
   bind (el, binding) {
@@ -37,6 +37,7 @@ Vue.directive('tresize', {
   }
 })
 
+
 /* eslint-disable no-new */
 new Vue({
   components: { App },
@@ -44,3 +45,7 @@ new Vue({
   store,
   template: '<App/>'
 }).$mount('#app')
+
+
+// 隐藏开发模式console安全告警
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
