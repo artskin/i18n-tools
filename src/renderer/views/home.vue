@@ -1,206 +1,290 @@
 <template>
   <div class="main">
-    <div class="side">
-      <div class="logo">
-        <img width="64" src="~@/assets/logo.svg" alt="electron-vue">
+    <div class="side" style="-webkit-app-region: drag">
+      <div class="logo" style="-webkit-app-region: drag">
+        <svg viewBox="0 0 1024 1024" width="60" height="66">
+          <path d="M958.136 192h-432.64l-45.03 174.2-16.166 114.484 86.658 241.69 13.914 293.278h393.266c36.368 0 65.864-29.496 65.864-65.864V257.864C1024 221.496 994.504 192 958.136 192z" fill="#E6E6E6" p-id="6311"></path>
+          <path d="M737.392 832l-172.522 183.652L503.764 832l24.932-66.958z" fill="#3A5BBC" p-id="6312"></path>
+          <path d="M939.13 488.348v-41.74h-158.608v-58.434h-41.74v58.434H595.84v41.74h231.78c-12.892 27.144-35.242 70.43-65.956 116.07-28.264-35.298-46.124-59.862-46.336-60.154l-12.258-16.89-33.784 24.51 12.254 16.89c0.954 1.316 21.752 29.926 54.676 70.6-22.444 27.498-63.616 72.212-85.31 93.904l29.512 29.512c18.724-18.724 57.548-60.428 82.852-90.654 32.918 39.106 65.046 74.388 95.708 105.052l14.756 14.756 29.516-29.51-14.756-14.756C856.816 716 823.456 679.15 789.2 638.08c44.266-63.646 72.96-123.912 84.4-149.732h65.53z" fill="#808080" p-id="6313"></path>
+          <path d="M698.658 715.046L737.392 832H65.864C29.468 832 0 802.504 0 766.136V74.212C0 37.844 29.468 8.348 65.864 8.348h398.832L525.496 192l91.214 275.478 81.948 247.568z" fill="#518EF8" p-id="6314"></path><path d="M298.602 574.748c-85.54 0-155.13-69.59-155.13-155.13s69.59-155.13 155.13-155.13c41.408 0 80.364 16.13 109.69 45.424l-29.498 29.532c-21.446-21.42-49.922-33.216-80.194-33.216-62.526 0-113.392 50.866-113.392 113.392s50.866 113.392 113.392 113.392c55.396 0 101.64-39.934 111.466-92.522h-111.462v-41.74h155.13v20.87c-0.002 85.538-69.592 155.128-155.132 155.128z" fill="#FFFFFF" p-id="6315"></path>
+        </svg>
         <h1>可视化翻译</h1>
       </div>
-      <h4></h4>
       <div class="entry">
         <div class="select-file">
           <input class="input-file" @change="entryFile" type="file" name="导入">
           <button>+ 导入语言包</button>
         </div>
       </div>
-      <br>
-      <br>
-      <br>
-      <br>
-      <!-- <h4>导出</h4> -->
+      <div class="catalog">
+        <h4>目录</h4>
+        <el-input class="search-text"
+          placeholder="输入关键字进行过滤"
+          size="small"
+          v-model="filterText">
+        </el-input>
+        <el-tree ref="tree" 
+        :data="treeData" 
+        node-key="id"
+        highlight-current
+        @current-change = "clickLocalNode"
+        :filter-node-method="filterNode"></el-tree>
+      </div>
       <div class="output">
         <button class="fixedlb" @click="exportLang">导出</button>
         <p>Powered by MuFeng</p>
       </div>
-      
     </div>
     <div class="content">
       <!-- <h2>SenseGuard i18n-tools</h2> -->
       <div class="main-heade">
-        <h3>中文包</h3>
-        <h3>英文包</h3>
+        <h3>中文包: <span>{{langFile.zh.name}}</span></h3>
+        <h3>英文包: <span>{{langFile.en.name}}</span></h3>
       </div>
-      <section>
+      <section ref="pageCon">
+        <div class="nodata" v-if="Object.keys(lang.zh).length == 0">
+          请先导入语言包文件:<br>
+          <span>支持.json，或json格式的(.js/.ts)文件。</span>
+        </div>
         <div class="kv">
-        <dl v-for="(val, key) in lang.zh" :key="key">
-          <dt><em contenteditable="true" v-text="key" @input="key = $event.target.innerText"></em></dt>
-          <dd>
-            <div v-if="typeof lang.zh[key] == 'string'">
-              <label for="">中文</label>
-              <textarea :class="key" :ref="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key]"></textarea>
-            </div>
-            <ul v-else>
-              <li v-for="(item, index) in lang.zh[key]" :key="index">
-                <em>{{index}}</em>
-                <textarea :class="index" :ref="index" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key][index]"></textarea>
-              </li>
-            </ul>
-          </dd>
-        </dl>
-      </div>
-      <div class="kv">
-        <dl v-for="(val, key) in lang.en" :key="key">
-          <dt><em>{{key}}</em></dt>
-          <dd>
-            <div v-if="typeof lang.en[key] == 'string'">
-              <label for="">英文</label>
-              <textarea style="resize:none" :class="key" :ref="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.en[key]"></textarea>
-            </div>
-            <ul v-else>
-              <li v-for="(item, index) in lang.en[key]" :key="index">
-                <em>{{index}}</em>
-                <textarea :class="index" :ref="index" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.en[key][index]"></textarea>
-              </li>
-            </ul>
-          </dd>
-        </dl>
-      </div>
+          <dl v-for="(val, key) in lang.zh" :key="key">
+            <dt :ref="key" :name="key"><em contenteditable="true" v-text="key" @input="key = $event.target.innerText"></em></dt>
+            <dd>
+              <div v-if="typeof lang.zh[key] == 'string'">
+                <label>中文</label>
+                <textarea :class="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key]"></textarea>
+              </div>
+              <ul v-else>
+                <li v-for="(item, index) in lang.zh[key]" :key="index">
+                  <em>{{index}}</em>
+                  <div v-if="typeof lang.zh[key][index] == 'string'">
+                    <textarea :class="index" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key][index]"></textarea>
+                  </div>
+                  <div v-else class="child-item">
+                    <ul>
+                      <li v-for="(childitem, n) in lang.zh[key][index]" :key="n">
+                        <em>{{n}}</em>
+                        <textarea :class="index" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key][index][n]"></textarea>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+        </div>
+        <div class="kv">
+          <dl v-for="(val, key) in lang.en" :key="key">
+            <dt><em>{{key}}</em></dt>
+            <dd>
+              <div v-if="typeof lang.en[key] == 'string'">
+                <label for="">英文</label>
+                <textarea style="resize:none" :class="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.en[key]"></textarea>
+              </div>
+              <ul v-else>
+                <li v-for="(item, index) in lang.en[key]" :key="index">
+                  <em>{{index}}</em>
+                  <div v-if="typeof lang.en[key][index] == 'string'">
+                    <textarea :class="index" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.en[key][index]"></textarea>
+                  </div>
+                  <div v-else class="child-item">
+                    <ul>
+                      <li v-for="(childitem, n) in lang.en[key][index]" :key="n">
+                        <em>{{n}}</em>
+                        <textarea :class="index" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.en[key][index][n]"></textarea>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+        </div>
       </section>
     </div>
   </div>
 </template>
-
 <script>
-  const {ipcRenderer} = require('electron')
-  
-  // const path = require('path')
-  // console.log(path)
-  const fs = require('fs')
-  const zhload = require('../assets/zh.json')
-  const enload = require('../assets/en.json')
-
-  // const selectDirBtn = document.getElementById('select-directory')
-
-  // selectDirBtn.addEventListener('click', (event) => {
-  //   ipcRenderer.send('open-file-dialog')
-  // })
-
-  // ipcRenderer.on('selected-directory', (event, path) => {
-  //   document.getElementById('selected-file').innerHTML = `你已选择: ${path}`
-  // })
-  export default {
-    data () {
-      return {
-        name: this.$route.name,
-        path: this.$route.path,
-        lang: {
-          en: {},
-          zh: {}
+const {ipcRenderer} = require('electron')
+const { remote } = require('electron')
+// const path = require('path')
+const fs = require('fs')
+const zhload = require('../assets/zh.json')
+const enload = require('../assets/en.json')
+import {jsonTree} from '../assets/utils.js'
+import { reverse } from 'dns'
+import { parse } from 'querystring'
+//document.querySelector('.ul').scrollIntoView()
+export default {
+  data () {
+    return {
+      name: this.$route.name,
+      path: this.$route.path,
+      lang: {
+        en: {},
+        zh: {}
+      },
+      langFile:{
+        en:{
+          name:''
+        },
+        zh:{
+          name:''
         }
+      },
+      filterText:'',
+      treeData:[]
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val);
+    }
+  },
+  computed: {
+    aDouble: vm => vm.a * 2
+  },
+  mounted () {
+     this.lang.zh = zhload
+    // this.lang.en = enload
+    //this.treeInit();
+  },
+  methods: {
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    clickLocalNode(data,node,key){
+      let itemName = data.label;
+      let targetEl
+      if(this.$refs[itemName].length>0){
+        targetEl = this.$refs[itemName][0]
+      }else{
+        targetEl = this.$refs[itemName]
       }
+      targetEl.scrollIntoView({behavior:"smooth"})
     },
-    computed: {
-      aDouble: vm => vm.a * 2
-    },
-    mounted () {
-      this.lang.zh = zhload
-      this.lang.en = enload
-    },
-    methods: {
-      entryFile (e) {
-        let getfile = e.target.files[0]
-        let fileName = getfile.name
-        let langName = fileName.substr(0, fileName.lastIndexOf('.'))
-        console.log(langName)
-        fs.readFile(getfile.path, 'utf-8', (err, data) => {
-          if (err) {
-            console.log(err)// eslint-disable-line
-          } else {
-            // console.log(data)// eslint-disable-line
-            this.lang[langName] = JSON.parse(data)
-            // console.log(JSON.parse(data))
-            // console.log(Object.keys(this.lang[langName]))
+    treeInit(){
+      let self = this;
+      this.treeData = [];
+      let treeJson = JSON.parse(JSON.stringify(this.lang.zh))
+      getJsonData(treeJson)
+      function getJsonData(jsonData,key){
+        //console.log(Object.entries(jsonData))
+        Object.entries(jsonData).map((item)=>{
+          //console.log(item)
+          let itemObj = {
+            label:item[0]
           }
+          // if(typeof item[1] === 'object'){
+          //   itemObj.children = []
+          //   for(let n in item[1]){
+          //     itemObj.children.push({label:n});
+          //   }
+          // }
+          self.treeData.push(itemObj)
         })
-        // console.log(fs.readFileSync(getfile.path).toString())
-        // let result = JSON.parse(fs.readFileSync(getfile.path))
-        // console.log(result)
-        ipcRenderer.send('open-file-dialog')
-      },
-      selectFile (e) {
-        ipcRenderer.send('open-file-dialog')
-      },
-      changed (e) {
-        // console.log(e)
-        // this.$refs[e.className][1].style.height = this.$refs[e.className][0].style.height
-      },
-      exportLang () {
-        let str = JSON.stringify(this.lang.zh, '', '\t')
-        // console.log(dialog)
-        //dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]})
-        // 向asynchronous-message发送消息
-        //ipcRenderer.send('asynchronous-message', 'ping')
-
-        ipcRenderer.sendSync('synchronous-message', 'ping')
-        //console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
-
-        // 接收synchronous-reply返回的消息
-        ipcRenderer.on('synchronous-reply', (event, arg) => {
-          console.log(arg) // prints "pong"
-          let filePath = arg+"\\"+'zhs.json'
-          console.log(filePath)
-
-          fs.writeFile(filePath, str, 'utf-8', (err, data) => {
-            //console.log(err, data)
-          })
-        })
-        // 接收asynchronous-reply返回的消息
-        ipcRenderer.on('asynchronous-reply', (event, arg) => {
-          console.log(arg) // prints "pong"
-        })
-
-        //console.log(ipcRenderer)
-        // new Uint8Array(this.lang.zh)
-        
       }
+      // console.log(jsonTree(this.lang.zh,{
+      //     id: 'id',
+      //     pid: 'parent',
+      //     children: 'children'
+      // }))
+      //console.log(this.treeData)
+    },
+    entryFile (e) {
+      let getfile = e.target.files[0]
+      let fileName = getfile.name
+      let langName = fileName.substr(0, fileName.lastIndexOf('.'))
+      console.log(fileName)
+      this.langFile[langName].name = fileName;
+      fs.readFile(getfile.path, 'utf-8', (err, data) => {
+        //console.log(typeof data)
+        let toJson = data.substring(data.indexOf('{'))
+        //console.log(toJson)
+        if (err) {
+          console.log(err)// eslint-disable-line
+        } else {
+          // console.log(data)// eslint-disable-line
+          this.lang[langName] = JSON.parse(toJson)
+          // console.log(JSON.parse(data))
+          // console.log(Object.keys(this.lang[langName]))
+          this.treeInit()
+        }
+      })
+      // console.log(fs.readFileSync(getfile.path).toString())
+      // let result = JSON.parse(fs.readFileSync(getfile.path))
+      // console.log(result)
+      //ipcRenderer.send('open-file-dialog')
+    },
+    selectFile (e) {
+      //ipcRenderer.send('open-file-dialog')
+    },
+    changed (e) {
+      // this.$refs[e.className][1].style.height = this.$refs[e.className][0].style.height
+    },
+    exportLang () {
+      let str = JSON.stringify(this.lang.zh, '', '\t')
+      //dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]})
+      // 向asynchronous-message发送消息
+      //ipcRenderer.send('asynchronous-message', 'ping')
+      
+      // const { shell } = require("electron").remote;
+      // console.log(shell.showItemInFolder)
+      //shell.showItemInFolder("");
+      // dialog.showSaveDialog({
+      //   title:'语言包文件导出',
+      //   defaultPath:this.langFile.name,
+      //   filters:[{name:'All files',extensions:["*"]}]
+      // },
+      // filename => {
+      //   console.log(filename)
+      //   if(filename){
+      //     fs.writeFile(filePath, str, 'utf-8', (err, data) => {
+      //       console.log(err, data)
+      //     })
+      //   }else{
+      //     reverse('取消')
+      //   }
+      // })
+      //console.log(this.langFile.zh.name)
+      ipcRenderer.send('save-dialog',this.langFile.zh.name)
+      ipcRenderer.on('save-file', (event, path) => {
+        if(!path.canceled){
+          let filePath = path.filePath
+          fs.writeFile(filePath, str, 'utf-8', (err, data) => {
+            if (err) throw err;
+            console.log('文件已被保存');
+          })
+        }
+      })
+      // 接收asynchronous-reply返回的消息
+      // ipcRenderer.on('asynchronous-reply', (event, arg) => {
+      //   console.log(arg) // prints "pong"
+      // })
+      //console.log(ipcRenderer)
+      // new Uint8Array(this.lang.zh)
     }
   }
+}
 
 </script>
-
 <style lang="less" scoped>
 .main{
   position: relative;
   height: 100%;
 }
 .logo{
+  -webkit-app-region: drag;
   text-align: center;
   h1{
     font-size: 14px;
     color: #999;
     font-weight: normal;
   }
-  padding: 20px 0;
+  padding: 10px 0;
 }
 ul{list-style: none;}
-.entry{
-  input{
-    width: 100%;
-    font-size: 14px;
-  }
-  .select-file{
-    position: relative;
-    .input-file{
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
-      padding: 0;
-      margin: 0;
-      opacity: 0;
-    }
-  }
-}
 .side{
   position: absolute;
   left: 0;
@@ -208,29 +292,69 @@ ul{list-style: none;}
   z-index: 1;
   width: 200px;
   height: 100%;
-  padding: 20px;
+  overflow-y: hidden;
+  padding: 12px;
   background: #f0f0f0;
-  border-right: 1px solid #eee;
+  border-right: 1px solid #dedede;
   button{
     width: 100%;
     border-radius: 5em;
-    padding: .5em;
+    padding: .4em;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0,0,0,.12);
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    &:hover{
+      box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0,0,0,.12);
+    }
   }
   .entry{
+    padding:0 12px;
+    input{
+      width: 100%;
+      font-size: 14px;
+    }
+    .select-file{
+      position: relative;
+      .input-file{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+      }
+    }
     button{
       background: transparent;
       color: #118bee;
     }
   }
+  .catalog{
+    height: calc(100% - 245px);
+    h4{
+      color: #999;
+      padding-bottom: .3em;
+    }
+    .search-text{
+      margin-bottom: .5rem;
+    }
+    .el-tree{
+      height: calc(100% - 74px);
+      overflow-y: auto;
+    }
+  }
   .output{
-    position:absolute;
-    width: 160px;
+    padding:0 12px;
+    // position:absolute;
+    // width: 152px;
     text-align: center;
     bottom: 0;
     p{
       font-size: 12px;
       color: #999;
       font-family: '幼圆';
+      margin: 0;
     }
   }
 }
@@ -239,7 +363,7 @@ ul{list-style: none;}
   height: 100%;
   .main-heade{
     display: flex;
-    box-shadow: 2px 3px 3px rgba(0,0,0,.1);
+    box-shadow: 1px 2px 3px rgba(0,0,0,.08);
     border-bottom: 1px solid #ddd;
     position: relative;
     z-index: 999;
@@ -253,12 +377,28 @@ ul{list-style: none;}
       text-indent: 10px;
       position: relative;
       text-align: center;
+      span{
+        font-size: 12px;
+        color: #999;
+      }
     }
   }
   section{
     overflow-y: auto;
     padding: 0 10px;
     height: calc(100% - 40px);
+    //scroll-behavior: instant;//smooth
+    .nodata{
+      padding: 40px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #ccc;
+      text-align: center;
+      font-size: 14px;
+    }
   }
 }
 
@@ -288,7 +428,7 @@ ul{list-style: none;}
     }
     dt{
       width: 100%;
-      padding: 8px;
+      padding: 8px 8px 4px 8px;
       line-height: 1.4;
     }
     dd{
@@ -310,9 +450,20 @@ ul{list-style: none;}
         padding-left: 50px;
         em{font-size: 12px;}
       }
+      .child-item{
+        li{
+          display: flex;
+          align-items: center;
+          em{
+            padding: 4px;
+            display: inline-block;
+            width: 60px;
+            text-align: right;
+          }
+        }
+      }
     }
   }
-  
   textarea{
     width: 94%;
     resize: vertical;
@@ -324,11 +475,11 @@ ul{list-style: none;}
     line-height: 1.6;
     border-radius: 0px;
     &:focus{
-      outline: 1px solid teal;
+      outline: 1px solid #9d9d9d;
       outline-offset: -1px;
       box-shadow: 0 0 10px rgba(0,0,0,.2);
+      background: #ffffdf;
     }
   }
-  
 }
 </style>

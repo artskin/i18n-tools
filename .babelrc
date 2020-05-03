@@ -3,28 +3,26 @@
   "env": {
     "main": {
       "presets": [
-        ["env", {
-          "targets": { "node": 7 }
-        }],
-        "stage-0"
+        ["@babel/preset-env"]
       ]
     },
     "renderer": {
       "presets": [
-        ["env", {
-          "modules": false
-        }],
-        "stage-0"
+        ["@babel/preset-env"]
       ]
     },
     "web": {
       "presets": [
-        ["env", {
-          "modules": false
-        }],
-        "stage-0"
+        ["@babel/preset-env"]
       ]
     }
   },
-  "plugins": ["transform-runtime"]
+  "plugins": [
+    ["@babel/plugin-transform-runtime"],
+    ["component",{
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }
+    ]
+  ]
 }

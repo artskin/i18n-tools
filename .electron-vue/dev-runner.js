@@ -49,11 +49,19 @@ function startRenderer () {
     })
 
     compiler.hooks.compilation.tap('compilation', compilation => {
+      //console.log('是啥',compilation.hooks)
       compilation.hooks.htmlWebpackPluginAfterEmit.tapAsync('html-webpack-plugin-after-emit', (data, cb) => {
         hotMiddleware.publish({ action: 'reload' })
         cb()
       })
+      //hotMiddleware.publish({ action: 'reload' })
     })
+    // compiler.plugin('compilation', compilation => {
+    //   compilation.plugin('html-webpack-plugin-after-emit', (data, cb) => {
+    //     hotMiddleware.publish({ action: 'reload' })
+    //     cb()
+    //   })
+    // })
 
     compiler.hooks.done.tap('done', stats => {
       logStats('Renderer', stats)
