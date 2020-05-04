@@ -1,7 +1,30 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
-
+import { app, BrowserWindow, ipcMain, dialog,Menu } from 'electron'
+app.name = 'i18n-tools';
+const template = [
+  {label: app.name},
+  {
+    label:'刷新',
+    click:async()=>{
+      console.log('刷新')
+      mainWindow.reload()
+      //location.reload()
+    }
+  }
+]
+console.log(app)
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
+app.on('browser-window-created',(ev,win)=>{
+  win.webContents.on('context-menu',(ev,params)=>{
+    menu.popup(win,params.x,params.y)
+  })
+})
+ipcMain.on('show-context-menu',(ev)=>{
+  //const win = BrowserWindow.fromWebContents(event.sender)
+  //menu.popup(win)
+})
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
