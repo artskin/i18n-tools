@@ -287,22 +287,25 @@ export default {
     },
     addItem(){
       let self = this;
-      this.isSubmit = true;
-      if(this.lang && this.lang.zh){
-        console.log(this.lang.zh[this.currentModule])
-        this.lang.zh[this.currentModule][this.form.key] = this.form.zhValue
-      }
-      if(this.lang && this.lang.en){
-        console.log(this.lang)
-        this.lang.en[this.currentModule][this.form.key] = this.form.enValue
-      }
-      setTimeout(()=>{
-        this.isSubmit = false;
-        this.dialogShowVisible = false
-      },10)
-      new Promise((resolve,reject)=>{
-        
+      this.$refs.regionRules.validate((valid) => {
+        if (valid) {
+          this.isSubmit = true;
+          if(this.lang && this.lang.zh){
+            console.log(this.lang.zh[this.currentModule])
+            this.lang.zh[this.currentModule][this.form.key] = this.form.zhValue
+          }
+          if(this.lang && this.lang.en){
+            console.log(this.lang)
+            this.lang.en[this.currentModule][this.form.key] = this.form.enValue
+          }
+          setTimeout(()=>{
+            this.isSubmit = false;
+            this.dialogShowVisible = false
+          },100)
+        }
       })
+      
+      
     },
     creatMenu(ev,data,node,self){
       ev.preventDefault()
@@ -353,6 +356,9 @@ export default {
   }
   .el-dialog__body{
     padding: 20px 40px 0;
+  }
+  .el-dialog__footer{
+    padding-right: 40px;
   }
 }
 .main{
