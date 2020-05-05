@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="catalog">
-        <h4>目录</h4>
+        <h4>模块目录</h4>
         <el-input class="search-text"
           placeholder="输入关键字进行过滤"
           size="small"
@@ -103,6 +103,27 @@
         </div>
       </section>
     </div>
+    <el-dialog
+      title="添加新翻译项"
+      width="500px"
+     :visible.sync="dialogShowVisible">
+      <h5>模块：{{currentModule}}</h5>
+      <el-form :model="form" ref="regionRules" :rules="regionRules">
+        <el-form-item label="key" :label-width="formLabelWidth" prop="key">
+          <el-input size="small" v-model="form.key" maxlength="40" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="中文" :label-width="formLabelWidth" prop="zhValue">
+          <el-input size="small" v-model="form.zhValue" maxlength="100" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="英文" :label-width="formLabelWidth" prop="enValue">
+          <el-input size="small" v-model="form.enValue" maxlength="100" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" :loading="isSubmit" @click="addItem">确定</el-button>
+        <el-button type="info" @click="dialogShowVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -121,6 +142,28 @@ import { parse } from 'querystring'
 export default {
   data () {
     return {
+      form:{
+        key:'',
+        enValue:'',
+        zhValue:''
+      },
+      formLabelWidth:'80px',
+      regionRules:{
+        key: [
+          { required: true, trigger: 'blur' },
+          { max: 40, message: '', trigger: 'blur'}
+        ],
+        enValue: [
+          { required: true, trigger: 'blur' },
+          { max: 40, message: '', trigger: 'blur' }
+        ],
+        zhValue: [
+          { required: true, trigger: 'blur' },
+          { max: 40, message: '', trigger: 'blur' }
+        ]
+      },
+      isSubmit:false,
+      currentModule:'',
       name: this.$route.name,
       path: this.$route.path,
       lang: {
@@ -137,7 +180,8 @@ export default {
       },
       filterText:'',
       treeData:[],
-      contextMenu:new Menu()
+      contextMenu:new Menu(),
+      dialogShowVisible:false
     }
   },
   watch: {
@@ -149,7 +193,7 @@ export default {
     aDouble: vm => vm.a * 2
   },
   mounted () {
-    this.lang.zh = zhload
+    // this.lang.zh = zhload
     // this.lang.en = enload
     this.treeInit();
     this.contextMenuInit();
@@ -171,7 +215,7 @@ export default {
       }else{
         targetEl = this.$refs[itemName]
       }
-      targetEl.scrollIntoView({behavior:"smooth"})
+      targetEl.scrollIntoView()//{behavior:"smooth"}
     },
     treeInit(){
       let self = this;
@@ -181,7 +225,7 @@ export default {
       function getJsonData(jsonData,key){
         //console.log(Object.entries(jsonData))
         Object.entries(jsonData).map((item)=>{
-          //console.log(item)
+          console.log(item[1])
           let itemObj = {
             label:item[0]
           }
@@ -191,7 +235,9 @@ export default {
           //     itemObj.children.push({label:n});
           //   }
           // }
-          self.treeData.push(itemObj)
+          if(typeof item[1] == 'object'){
+            self.treeData.push(itemObj)
+          }
         })
       }
       // console.log(jsonTree(this.lang.zh,{
@@ -233,16 +279,36 @@ export default {
       // this.$refs[e.className][1].style.height = this.$refs[e.className][0].style.height
     },
     contextMenuInit(){
-      this.contextMenu.append(new MenuItem({ label: '新建子项', click:()=> { this.addItem() } }))
+      this.contextMenu.append(new MenuItem({ label: '新建子项', click:()=> { this.showAddItem() } }))
       this.contextMenu.append(new MenuItem({ type: 'separator' }))
       this.contextMenu.append(new MenuItem({ label: '新建模块' }))
     },
+    showAddItem(){
+      this.dialogShowVisible = true;
+    },
     addItem(){
-      console.log('item 1 clicked')
+      let self = this;
+      this.isSubmit = true;
+      if(this.lang && this.lang.zh){
+        console.log(this.lang.zh[this.currentModule])
+        this.lang.zh[this.currentModule][this.form.key] = this.form.zhValue
+      }
+      if(this.lang && this.lang.en){
+        console.log(this.lang)
+        this.lang.en[this.currentModule][this.form.key] = this.form.enValue
+      }
+      setTimeout(()=>{
+        this.isSubmit = false;
+        this.dialogShowVisible = false
+      },10)
+      new Promise((resolve,reject)=>{
+        
+      })
     },
     creatMenu(ev,data,node,self){
       ev.preventDefault()
-      console.log(this.contextMenu)
+      //console.log(ev,data,node,self)
+      this.currentModule = data.label
       this.contextMenu.popup({ window: remote.getCurrentWindow() })
     },
     exportLang (currentlang) {
@@ -345,6 +411,7 @@ ul{list-style: none;}
     h4{
       color: #999;
       padding-bottom: .3em;
+      font-size: 14px;
     }
     .search-text{
       margin-bottom: .5rem;
@@ -441,7 +508,7 @@ ul{list-style: none;}
 .kv{
   position: relative;
   width: 50%;
-  em{color: teal;}
+  em{color: teal;opacity: .8;}
   dl{
     position: relative;
     &:nth-child(even){
@@ -469,7 +536,7 @@ ul{list-style: none;}
       }
       ul{
         padding-left: 24px;
-        em{font-size: 12px;}
+        em{font-size: 12px;opacity: 0.5;}
       }
       .child-item{
         li{
@@ -486,7 +553,7 @@ ul{list-style: none;}
     }
   }
   textarea{
-    width: 94%;
+    width: 96%;
     resize: vertical;
     transition: height .1s;
     font-size: 12px;

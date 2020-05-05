@@ -6,9 +6,13 @@ import router from './router'
 import store from './store'
 import './assets/mvp.css'
 
-import {Tree,Input} from 'element-ui'
+import {Tree,Input,Dialog,Button,Form,FormItem} from 'element-ui'
 Vue.use(Tree)
 Vue.use(Input)
+Vue.use(Button)
+Vue.use(Form)
+Vue.use(FormItem)
+Vue.use(Dialog)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
