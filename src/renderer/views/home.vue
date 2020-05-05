@@ -104,24 +104,23 @@
       </section>
     </div>
     <el-dialog
-      title="添加新翻译项"
       width="500px"
      :visible.sync="dialogShowVisible">
-      <h5>模块：{{currentModule}}</h5>
+      <div class="dialog-title" slot="title">{{currentModule}}: <em>添加子项</em></div>
       <el-form :model="form" ref="regionRules" :rules="regionRules">
-        <el-form-item label="key" :label-width="formLabelWidth" prop="key">
+        <el-form-item label="key:" :label-width="formLabelWidth" prop="key">
           <el-input size="small" v-model="form.key" maxlength="40" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="中文" :label-width="formLabelWidth" prop="zhValue">
+        <el-form-item label="中文:" :label-width="formLabelWidth" prop="zhValue">
           <el-input size="small" v-model="form.zhValue" maxlength="100" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="英文" :label-width="formLabelWidth" prop="enValue">
+        <el-form-item label="英文:" :label-width="formLabelWidth" prop="enValue">
           <el-input size="small" v-model="form.enValue" maxlength="100" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :loading="isSubmit" @click="addItem">确定</el-button>
-        <el-button type="info" @click="dialogShowVisible = false">取消</el-button>
+        <el-button size="small" type="primary" :loading="isSubmit" @click="addItem">确定</el-button>
+        <el-button size="small" type="info" @click="dialogShowVisible = false">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -225,7 +224,7 @@ export default {
       function getJsonData(jsonData,key){
         //console.log(Object.entries(jsonData))
         Object.entries(jsonData).map((item)=>{
-          console.log(item[1])
+          //console.log(item[1])
           let itemObj = {
             label:item[0]
           }
@@ -251,7 +250,7 @@ export default {
       let getfile = e.target.files[0]
       let fileName = getfile.name
       let langName = fileName.substr(0, fileName.lastIndexOf('.'))
-      console.log(fileName)
+      //console.log(fileName)
       this.langFile[langName].name = fileName;
       fs.readFile(getfile.path, 'utf-8', (err, data) => {
         //console.log(typeof data)
@@ -280,8 +279,8 @@ export default {
     },
     contextMenuInit(){
       this.contextMenu.append(new MenuItem({ label: '新建子项', click:()=> { this.showAddItem() } }))
-      this.contextMenu.append(new MenuItem({ type: 'separator' }))
-      this.contextMenu.append(new MenuItem({ label: '新建模块' }))
+      // this.contextMenu.append(new MenuItem({ type: 'separator' }))
+      // this.contextMenu.append(new MenuItem({ label: '新建模块' }))
     },
     showAddItem(){
       this.dialogShowVisible = true;
@@ -335,6 +334,27 @@ export default {
 
 </script>
 <style lang="less">
+.el-dialog{
+  background: #ECECEC;
+  .dialog-title{
+    em{
+      font-size: small;
+      font-style: normal;
+    }
+  }
+  button{
+    margin: 0;
+  }
+  .el-dialog__header{
+    padding-top: 10px;
+  }
+  .el-dialog__headerbtn{
+    top:10px;
+  }
+  .el-dialog__body{
+    padding: 20px 40px 0;
+  }
+}
 .main{
   position: relative;
   height: 100%;
@@ -410,14 +430,15 @@ ul{list-style: none;}
     height: calc(100% - 180px);
     h4{
       color: #999;
-      padding-bottom: .3em;
-      font-size: 14px;
+      padding: .3em 4px;
+      font-size: 12px;
+      font-weight: normal;
     }
     .search-text{
       margin-bottom: .5rem;
     }
     .el-tree{
-      height: calc(100% - 74px);
+      height: calc(100% - 70px);
       overflow-y: auto;
       border:1px solid #dcdfe6;
       border-radius: 4px;
@@ -478,6 +499,7 @@ ul{list-style: none;}
     //scroll-behavior: instant;//smooth
     .nodata{
       padding: 40px;
+      padding-top: 120px;
       width: 100%;
       display: flex;
       align-items: center;

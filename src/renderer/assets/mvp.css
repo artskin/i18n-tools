@@ -332,7 +332,7 @@ form {
     display: block;
     max-width: var(--width-card-wide);
     min-width: var(--width-card);
-    padding: 1.5rem;
+    /* padding: 1.5rem; */
     text-align: var(--justify-normal);
 }
 
