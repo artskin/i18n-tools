@@ -36,7 +36,7 @@ const template = [
     }
   }
 ]
-//console.log(app)
+
 const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu)
 app.on('browser-window-created',(ev,win)=>{
