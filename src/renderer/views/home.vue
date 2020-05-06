@@ -39,8 +39,8 @@
     <div class="content">
       <!-- <h2>SenseGuard i18n-tools</h2> -->
       <div class="main-heade">
-        <h3>中文包<span v-if="langFile.zh.name">: <span class="gray">{{langFile.zh.name}}</span> <button class="mini" @click="exportLang(langFile.zh.name)">➥导出</button></span></h3>
-        <h3>英文包<span v-if="langFile.en.name">: <span class="gray">{{langFile.en.name}}</span> <button class="mini" @click="exportLang(langFile.en.name)">➥导出</button></span></h3>
+        <h3>中文包<span v-if="langFile.zh.name">: <span class="gray">{{langFile.zh.file}}</span> <button class="mini" @click="exportLang(langFile.zh)">➥导出</button></span></h3>
+        <h3>英文包<span v-if="langFile.en.name">: <span class="gray">{{langFile.en.file}}</span> <button class="mini" @click="exportLang(langFile.en)">➥导出</button></span></h3>
       </div>
       <section ref="pageCon">
         <div class="nodata" v-if="Object.keys(lang.zh).length == 0">
@@ -171,10 +171,12 @@ export default {
       },
       langFile:{
         en:{
-          name:''
+          name:'',
+          file:''
         },
         zh:{
-          name:''
+          name:'',
+          file:''
         }
       },
       filterText:'',
@@ -251,7 +253,8 @@ export default {
       let fileName = getfile.name
       let langName = fileName.substr(0, fileName.lastIndexOf('.'))
       //console.log(fileName)
-      this.langFile[langName].name = fileName;
+      this.langFile[langName].file = fileName;
+      this.langFile[langName].name = langName;
       fs.readFile(getfile.path, 'utf-8', (err, data) => {
         //console.log(typeof data)
         let toJson = data.substring(data.indexOf('{'))
@@ -304,8 +307,6 @@ export default {
           },100)
         }
       })
-      
-      
     },
     creatMenu(ev,data,node,self){
       ev.preventDefault()
@@ -315,8 +316,8 @@ export default {
     },
     exportLang (currentlang) {
       console.log(currentlang)
-      let str = JSON.stringify(this.lang.zh, '', '\t')
-      ipcRenderer.send('save-dialog',this.langFile.zh.name)
+      let str = JSON.stringify(this.lang[currentlang.name], '', '\t')
+      ipcRenderer.send('save-dialog',currentlang.file)
       ipcRenderer.on('save-file', (event, path) => {
         if(!path.canceled){
           let filePath = path.filePath
@@ -388,6 +389,7 @@ export default {
 }
 ul{list-style: none;}
 .side{
+  -webkit-app-region: drag;
   position: absolute;
   left: 0;
   top: 0;
