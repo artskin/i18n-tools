@@ -129,15 +129,9 @@
 const {ipcRenderer} = require('electron')
 const { remote } = require('electron')
 const { Menu, MenuItem } = remote
-const shell = require('electron').shell;
-// const path = require('path')
+const shell = require('electron').shell
 const fs = require('fs')
-const zhload = require('../assets/zh.json')
-const enload = require('../assets/en.json')
-import {jsonTree} from '../assets/utils.js'
-import { reverse } from 'dns'
-import { parse } from 'querystring'
-//document.querySelector('.ul').scrollIntoView()
+
 export default {
   data () {
     return {

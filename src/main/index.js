@@ -1,53 +1,6 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain, dialog,Menu,shell } from 'electron'
-app.name = 'i18n-tools';
-const template = [
-  {
-    label:'刷新',
-    click:async()=>{
-      console.log('刷新')
-      mainWindow.reload()
-      //location.reload()
-    }
-  },
-  {
-    label: '关于',
-    click:async()=>{
-      let aboutMe =  new BrowserWindow({
-        icon: './build/icons/icon-32.png',
-        nodeIntegration: false,
-        webSecurity: false,
-        width: 580,
-        height: 370,
-        useContentSize: true,
-        fullscreen:true,
-        fullscreenable:false,
-        skipTaskbar:true,
-        autoHideMenuBar:true
-        // thickFrame:false,
-        // opacity:0.99,
-        // transparent:true,
-        // titleBarStyle:'hidden',
-        // titleBarStyle: 'hiddenInset'
-        // frame: true, // 去除默认窗口栏
-      })
-      aboutMe.loadFile('./static/about.html')
-    }
-  }
-]
-
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
-app.on('browser-window-created',(ev,win)=>{
-  win.webContents.on('context-menu',(ev,params)=>{
-    menu.popup(win,params.x,params.y)
-  })
-})
-ipcMain.on('show-context-menu',(ev)=>{
-  //const win = BrowserWindow.fromWebContents(event.sender)
-  //menu.popup(win)
-})
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -63,7 +16,7 @@ const winURL = process.env.NODE_ENV === 'development'
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    icon: './build/icons/icon-32.png',
+    icon: './build/icons/icon-48.ico',
     nodeIntegration: false,
     webSecurity: false,
     width: 1000,
@@ -101,6 +54,48 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+app.name = 'i18n-tools';
+const template = [
+  {
+    label:'刷新',
+    click:async()=>{
+      mainWindow.reload()
+    }
+  },
+  {
+    label: '关于',
+    click:async()=>{
+      let aboutMe =  new BrowserWindow({
+        icon: './build/icons/icon-48.ico',
+        nodeIntegration: false,
+        webSecurity: false,
+        width: 580,
+        height: 370,
+        useContentSize: true,
+        contextIsolation:false,
+        webPreferences: {
+          nodeIntegration: false
+        },
+        skipTaskbar:true,
+        autoHideMenuBar:true,
+      })
+      aboutMe.loadFile(global.__static+"/about.html")
+    }
+  }
+]
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
+app.on('browser-window-created',(ev,win)=>{
+  win.webContents.on('context-menu',(ev,params)=>{
+    menu.popup(win,params.x,params.y)
+  })
+})
+ipcMain.on('show-context-menu',(ev)=>{
+  //const win = BrowserWindow.fromWebContents(event.sender)
+  //menu.popup(win)
 })
 // 监听asynchronous-message，接收渲染进程发送的消息
 // ipcMain.on('asynchronous-message', (event, arg) => {
