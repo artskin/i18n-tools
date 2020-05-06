@@ -8,7 +8,7 @@
           <path d="M939.13 488.348v-41.74h-158.608v-58.434h-41.74v58.434H595.84v41.74h231.78c-12.892 27.144-35.242 70.43-65.956 116.07-28.264-35.298-46.124-59.862-46.336-60.154l-12.258-16.89-33.784 24.51 12.254 16.89c0.954 1.316 21.752 29.926 54.676 70.6-22.444 27.498-63.616 72.212-85.31 93.904l29.512 29.512c18.724-18.724 57.548-60.428 82.852-90.654 32.918 39.106 65.046 74.388 95.708 105.052l14.756 14.756 29.516-29.51-14.756-14.756C856.816 716 823.456 679.15 789.2 638.08c44.266-63.646 72.96-123.912 84.4-149.732h65.53z" fill="#808080" p-id="6313"></path>
           <path d="M698.658 715.046L737.392 832H65.864C29.468 832 0 802.504 0 766.136V74.212C0 37.844 29.468 8.348 65.864 8.348h398.832L525.496 192l91.214 275.478 81.948 247.568z" fill="#518EF8" p-id="6314"></path><path d="M298.602 574.748c-85.54 0-155.13-69.59-155.13-155.13s69.59-155.13 155.13-155.13c41.408 0 80.364 16.13 109.69 45.424l-29.498 29.532c-21.446-21.42-49.922-33.216-80.194-33.216-62.526 0-113.392 50.866-113.392 113.392s50.866 113.392 113.392 113.392c55.396 0 101.64-39.934 111.466-92.522h-111.462v-41.74h155.13v20.87c-0.002 85.538-69.592 155.128-155.132 155.128z" fill="#FFFFFF" p-id="6315"></path>
         </svg>
-        <h1><a target="_blank" href="/static/about.html">可视化翻译</a></h1>
+        <h1>可视化翻译</h1>
       </div>
       <div class="entry">
         <div class="select-file">
@@ -20,7 +20,7 @@
         <h4>模块目录</h4>
         <el-input class="search-text"
           placeholder="输入关键字进行过滤"
-          size="small"
+          size="mini"
           v-model="filterText">
         </el-input>
         <el-tree ref="tree" 
@@ -39,20 +39,20 @@
     <div class="content">
       <!-- <h2>SenseGuard i18n-tools</h2> -->
       <div class="main-heade">
-        <h3>中文包<span v-if="langFile.zh.name">: <span class="gray">{{langFile.zh.file}}</span> <button class="mini" @click="exportLang(langFile.zh)">➥导出</button></span></h3>
-        <h3>英文包<span v-if="langFile.en.name">: <span class="gray">{{langFile.en.file}}</span> <button class="mini" @click="exportLang(langFile.en)">➥导出</button></span></h3>
+        <h3>中文包<span v-if="langFile.zh.name">: <span class="gray">{{langFile.zh.file}}</span> <button title="导出中文语言包" class="mini" @click="exportLang(langFile.zh)">➥导出</button></span></h3>
+        <h3>英文包<span v-if="langFile.en.name">: <span class="gray">{{langFile.en.file}}</span> <button title="导出英文语言包" class="mini" @click="exportLang(langFile.en)">➥导出</button></span></h3>
       </div>
       <section ref="pageCon">
-        <div class="nodata" v-if="Object.keys(lang.zh).length == 0">
+        <div class="nodata" v-if="Object.keys(lang.zh).length == 0 && Object.keys(lang.en).length == 0">
           请先导入语言包文件:<br>
           <span>支持.json，或json格式的(.js/.ts)文件。</span>
         </div>
         <div class="kv">
           <dl v-for="(val, key) in lang.zh" :key="key">
-            <dt :ref="key" :name="key"><em contenteditable="true" v-text="key" @input="key = $event.target.innerText"></em></dt>
+            <dt :ref="key" :name="key"><em v-text="key" @input="key = $event.target.innerText"></em></dt>
             <dd>
               <div v-if="typeof lang.zh[key] == 'string'">
-                <label>中文</label>
+                <label></label>
                 <textarea :class="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key]"></textarea>
               </div>
               <ul v-else>
@@ -79,7 +79,7 @@
             <dt><em>{{key}}</em></dt>
             <dd>
               <div v-if="typeof lang.en[key] == 'string'">
-                <label for="">英文</label>
+                <label for=""></label>
                 <textarea style="resize:none" :class="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.en[key]"></textarea>
               </div>
               <ul v-else>
@@ -374,6 +374,7 @@ export default {
     font-size: 14px;
     color: #999;
     font-weight: normal;
+    cursor: default;
   }
   a{color: #999;}
 }
@@ -435,12 +436,13 @@ ul{list-style: none;}
     }
   }
   .catalog{
-    height: calc(100% - 180px);
+    height: calc(100% - 176px);
     h4{
       color: #999;
       padding: .3em 4px;
       font-size: 12px;
       font-weight: normal;
+      cursor: default;
     }
     .search-text{
       margin-bottom: .5rem;
@@ -467,6 +469,7 @@ ul{list-style: none;}
       font-family: '幼圆';
       margin: 0;
       padding-top: .2em;
+      cursor: default;
       a{
         color: #999;
         font-weight: normal;
@@ -493,7 +496,7 @@ ul{list-style: none;}
       text-indent: 10px;
       position: relative;
       text-align: center;
-
+      cursor: default;
       .gray{
         font-size: 12px;
         color: #999;
@@ -502,7 +505,8 @@ ul{list-style: none;}
   }
   section{
     overflow-y: auto;
-    padding: 0 10px;
+    padding-left: 10px;
+    padding-right: 5px;
     height: calc(100% - 32px);
     //scroll-behavior: instant;//smooth
     .nodata{
@@ -516,6 +520,7 @@ ul{list-style: none;}
       color: #ccc;
       text-align: center;
       font-size: 14px;
+      cursor: default;
     }
   }
 }
@@ -559,13 +564,13 @@ ul{list-style: none;}
           font-weight: normal;
           color: #ccc;
           display: inline-block;
-          width: 44px;
+          min-width: 20px;
           padding: 4px;
           text-align: right;
         }
       }
       ul{
-        padding-left: 24px;
+        padding-left: 20px;
         em{font-size: 12px;opacity: 0.5;}
       }
       .child-item{

@@ -1,9 +1,8 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain, dialog,Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog,Menu,shell } from 'electron'
 app.name = 'i18n-tools';
 const template = [
-  {label: app.name},
   {
     label:'刷新',
     click:async()=>{
@@ -11,9 +10,33 @@ const template = [
       mainWindow.reload()
       //location.reload()
     }
+  },
+  {
+    label: '关于',
+    click:async()=>{
+      let aboutMe =  new BrowserWindow({
+        icon: './build/icons/icon.ico',
+        nodeIntegration: false,
+        webSecurity: false,
+        width: 500,
+        height: 370,
+        useContentSize: true,
+        fullscreen:true,
+        fullscreenable:false,
+        skipTaskbar:true,
+        autoHideMenuBar:true
+        // thickFrame:false,
+        // opacity:0.99,
+        // transparent:true,
+        // titleBarStyle:'hidden',
+        // titleBarStyle: 'hiddenInset'
+        // frame: true, // 去除默认窗口栏
+      })
+      aboutMe.loadFile('./static/about.html')
+    }
   }
 ]
-console.log(app)
+//console.log(app)
 const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu)
 app.on('browser-window-created',(ev,win)=>{
@@ -40,7 +63,7 @@ const winURL = process.env.NODE_ENV === 'development'
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    icon: './static/icon.png',
+    icon: './build/icons/icon.ico',
     nodeIntegration: false,
     webSecurity: false,
     width: 1000,

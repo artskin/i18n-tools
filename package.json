@@ -2,7 +2,7 @@
   "name": "i18n-tools",
   "version": "0.0.1",
   "author": "Guliqiang <guliqiang@sensetime.com>",
-  "description": "An electron-vue project",
+  "description": "国际化翻译可视化工具",
   "license": "ISC",
   "main": "./dist/electron/main.js",
   "scripts": {
