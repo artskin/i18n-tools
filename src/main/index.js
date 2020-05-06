@@ -15,10 +15,10 @@ const template = [
     label: '关于',
     click:async()=>{
       let aboutMe =  new BrowserWindow({
-        icon: './build/icons/icon.ico',
+        icon: './build/icons/icon-32.png',
         nodeIntegration: false,
         webSecurity: false,
-        width: 500,
+        width: 580,
         height: 370,
         useContentSize: true,
         fullscreen:true,
@@ -63,7 +63,7 @@ const winURL = process.env.NODE_ENV === 'development'
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    icon: './build/icons/icon.ico',
+    icon: './build/icons/icon-32.png',
     nodeIntegration: false,
     webSecurity: false,
     width: 1000,
