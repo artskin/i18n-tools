@@ -7,7 +7,8 @@ const chalk = require('chalk')
 const del = require('del')
 const { spawn } = require('child_process')
 const webpack = require('webpack')
-const Multispinner = require('multispinner')
+//const Multispinner = require('multispinner')
+const Ora = require('ora')
 
 
 const mainConfig = require('./webpack.main.config')
@@ -35,38 +36,63 @@ function build () {
   del.sync(['dist/electron/*', '!.gitkeep'])
 
   const tasks = ['main', 'renderer']
-  const m = new Multispinner(tasks, {
-    preText: 'building',
-    postText: 'process'
+  // const m = new Multispinner(tasks, {
+  //   preText: 'building',
+  //   postText: 'process'
+  // })
+  const spinner = new Ora({
+    text:'Building',
+    color:'cyan',
+    spinner:'dots'
   })
+  spinner.start()
+  // console.log(spinner)
 
   let results = ''
+  
+  // m.on('success', () => {
+  //   process.stdout.write('\x1B[2J\x1B[0f')
+  //   console.log(`\n\n${results}`)
+  //   console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
+  //   process.exit()
+  // })
 
-  m.on('success', () => {
-    process.stdout.write('\x1B[2J\x1B[0f')
-    console.log(`\n\n${results}`)
-    console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
-    process.exit()
-  })
+  // spinner.succeed().then(()=>{
+    
+  // })
 
-  pack(mainConfig).then(result => {
+
+  let mainProcess = pack(mainConfig).then(result => {
     results += result + '\n\n'
-    m.success('main')
+    //m.success('main')
+    spinner.succeed(chalk.green('building main process'))
   }).catch(err => {
-    m.error('main')
+    //m.error('main')
+    spinner.fail('building main process')
+    spinner.color = 'red'
     console.log(`\n  ${errorLog}failed to build main process`)
     console.error(`\n${err}\n`)
     process.exit(1)
   })
 
-  pack(rendererConfig).then(result => {
+  let rendererProcess = pack(rendererConfig).then(result => {
     results += result + '\n\n'
-    m.success('renderer')
+    //m.success('renderer')
+    spinner.succeed(chalk.green('building renderer process'))
   }).catch(err => {
-    m.error('renderer')
+    //m.error('renderer')
+    spinner.fail('building renderer process')
+    spinner.color = 'red'
     console.log(`\n  ${errorLog}failed to build renderer process`)
     console.error(`\n${err}\n`)
     process.exit(1)
+  })
+
+  Promise.all([mainProcess,rendererProcess]).then((result)=>{
+    process.stdout.write('\x1B[2J\x1B[0f')
+    console.log(`\n\n${results}`)
+    console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
+    process.exit()
   })
 }
 
