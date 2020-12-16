@@ -99,7 +99,7 @@ function startMain () {
 
     compiler.watch({}, (err, stats) => {
       if (err) {
-        console.log(err)
+        console.log('错误',err)
         return
       }
 
