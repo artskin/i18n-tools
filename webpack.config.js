@@ -1,5 +1,6 @@
 const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader')
+const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   entry:{
     "bundle":'./src/index.js',
@@ -8,6 +9,12 @@ module.exports = {
   output:{
     filename:'[name].js',
     path:path.resolve(__dirname,'dist')
+  },
+  devServer:{
+    contentBase:path.join(__dirname,'dist'),
+    compress:true,
+    hot:true,
+    port:9000
   },
   
   module:{
@@ -39,7 +46,12 @@ module.exports = {
     ]
   },
   plugins: [
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new CopyPlugin({
+      patterns: [
+        { from: "public"},
+      ],
+    }),
   ],
   resolve: {
     alias: {

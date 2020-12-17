@@ -1,8 +1,8 @@
 <template>
-  <div class="app">
-    <HelloWorld msg="hello Vue3"></HelloWorld>
-    <HomePage></HomePage>
-  </div>
+
+  <!-- <HelloWorld msg="hello Vue3"></HelloWorld> -->
+  <HomePage></HomePage>
+
 </template>
 <script>
   import HelloWorld from './components/Helloworld.vue'

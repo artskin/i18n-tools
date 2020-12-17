@@ -101,28 +101,30 @@
             </dd>
           </dl>
         </div>
+        <el-dialog
+          width="500px"
+          :visible.sync="dialogShowVisible">
+          <div class="dialog-title" slot="title">{{currentModule}}: <em>添加子项</em></div>
+          <el-form :model="form" ref="regionRules" :rules="regionRules">
+            <el-form-item label="key:" :label-width="formLabelWidth" prop="key">
+              <el-input size="small" v-model="form.key" maxlength="40" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="中文:" :label-width="formLabelWidth" prop="zhValue">
+              <el-input size="small" v-model="form.zhValue" maxlength="100" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="英文:" :label-width="formLabelWidth" prop="enValue">
+              <el-input size="small" v-model="form.enValue" maxlength="100" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button size="small" type="primary" :loading="isSubmit" @click="addItem">确定</el-button>
+            <el-button size="small" type="info" @click="dialogShowVisible = false">取消</el-button>
+          </div>
+        </el-dialog>
       </section>
+      
     </div>
-    <el-dialog
-      width="500px"
-     :visible.sync="dialogShowVisible">
-      <div class="dialog-title" slot="title">{{currentModule}}: <em>添加子项</em></div>
-      <el-form :model="form" ref="regionRules" :rules="regionRules">
-        <el-form-item label="key:" :label-width="formLabelWidth" prop="key">
-          <el-input size="small" v-model="form.key" maxlength="40" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="中文:" :label-width="formLabelWidth" prop="zhValue">
-          <el-input size="small" v-model="form.zhValue" maxlength="100" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="英文:" :label-width="formLabelWidth" prop="enValue">
-          <el-input size="small" v-model="form.enValue" maxlength="100" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" :loading="isSubmit" @click="addItem">确定</el-button>
-        <el-button size="small" type="info" @click="dialogShowVisible = false">取消</el-button>
-      </div>
-    </el-dialog>
+    
   </div>
 </template>
 <script>
@@ -159,8 +161,8 @@ export default defineComponent({
       },
       isSubmit:false,
       currentModule:'',
-      name: this.$route.name,
-      path: this.$route.path,
+      name: '首页',
+      path: '/home',
       lang: {
         en: {},
         zh: {}
@@ -179,25 +181,13 @@ export default defineComponent({
       treeData:[],
       contextMenu:new Menu(),
       dialogShowVisible:false
-    })
+    });
 
-    onMounted(){
-      this.treeInit();
-      this.contextMenuInit();
-    }
-
-    return {
-      ...toRefs(data),
-    }
-  }
-// filterText(val) {
-//       this.$refs.tree.filter(val);
-//     }
-  // watch(() => val,newVal => {
-  //   data.currentModule = newVal
-  // })
-
- function aboutMe(){
+    // onMounted() {
+    //   this.treeInit();
+    //   this.contextMenuInit();
+    // };
+    function aboutMe(){
     event.preventDefault();
     shell.openExternal('https://github.com/artskin/i18n-tools');
   }
@@ -231,32 +221,38 @@ export default defineComponent({
       })
     }
   }
-  function entryFile (e) {
-    let getfile = e.target.files[0]
-    let fileName = getfile.name
-    let langName = fileName.substr(0, fileName.lastIndexOf('.'))
-    //console.log(fileName)
-    this.langFile[langName].file = fileName;
-    this.langFile[langName].name = langName;
-    fs.readFile(getfile.path, 'utf-8', (err, data) => {
-      //console.log(typeof data)
-      let toJson = data.substring(data.indexOf('{'))
-      //console.log(toJson)
-      if (err) {
-        console.log(err)// eslint-disable-line
-      } else {
-        // console.log(data)// eslint-disable-line
-        this.lang[langName] = JSON.parse(toJson)
-        // console.log(JSON.parse(data))
-        // console.log(Object.keys(this.lang[langName]))
-        this.treeInit()
-      }
-    })
-    // console.log(fs.readFileSync(getfile.path).toString())
-    // let result = JSON.parse(fs.readFileSync(getfile.path))
-    // console.log(result)
-    //ipcRenderer.send('open-file-dialog')
+
+  const method = {
+    entryFile: (e) => {
+      console.log(this)
+      console.log(e)
+      let getfile = e.target.files[0]
+      let fileName = getfile.name
+      let langName = fileName.substr(0, fileName.lastIndexOf('.'))
+      //console.log(fileName)
+      data.langFile[langName].file = fileName;
+      data.langFile[langName].name = langName;
+      fs.readFile(getfile.path, 'utf-8', (err, data) => {
+        //console.log(typeof data)
+        let toJson = data.substring(data.indexOf('{'))
+        //console.log(toJson)
+        if (err) {
+          console.log(err)// eslint-disable-line
+        } else {
+          // console.log(data)// eslint-disable-line
+          data.lang[langName] = JSON.parse(toJson)
+          // console.log(JSON.parse(data))
+          // console.log(Object.keys(this.lang[langName]))
+          this.treeInit()
+        }
+      })
+      // console.log(fs.readFileSync(getfile.path).toString())
+      // let result = JSON.parse(fs.readFileSync(getfile.path))
+      // console.log(result)
+      //ipcRenderer.send('open-file-dialog')
+    }
   }
+  
   function selectFile (e) {
     //ipcRenderer.send('open-file-dialog')
   }
@@ -316,6 +312,20 @@ export default defineComponent({
       }
     })
   }
+
+    return {
+      ...toRefs(data),
+      ...method,
+    }
+  }
+// filterText(val) {
+//       this.$refs.tree.filter(val);
+//     }
+  // watch(() => val,newVal => {
+  //   data.currentModule = newVal
+  // })
+
+ 
 
 })
 </script>
