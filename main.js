@@ -2,7 +2,8 @@ const {  app, BrowserWindow, ipcMain, dialog,Menu,shell } = require('electron')
 const path = require('path');
 
 if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+  global.__static = require('path').join(__dirname, '/public').replace(/\\/g, '\\\\')
+  console.log(global.__static)
 }
 
 let mainWindow
@@ -12,7 +13,7 @@ const winURL = process.env.NODE_ENV === 'development'
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    icon: './build/icons/icon-48.ico',
+    icon: './public/icons/icon-48.ico',
     nodeIntegration: false,
     webSecurity: false,
     width: 1000,
@@ -64,7 +65,7 @@ const template = [
     label: '关于',
     click:async()=>{
       let aboutMe =  new BrowserWindow({
-        icon: './build/icons/icon-48.ico',
+        icon: './public/icons/icon-48.ico',
         nodeIntegration: false,
         webSecurity: false,
         width: 580,

@@ -25,6 +25,7 @@
     "css-loader": "^5.0.1",
     "electron": "^11.1.0",
     "electron-builder": "^22.9.1",
+    "element-plus": "^1.0.1-beta.9",
     "less": "^3.13.0",
     "less-loader": "^7.1.0",
     "style-loader": "^2.0.0",

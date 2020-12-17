@@ -28,7 +28,7 @@
         node-key="id"
         highlight-current
         @node-contextmenu="creatMenu"
-        @current-change = "clickLocalNode"
+        @current-change="clickLocalNode"
         :filter-node-method="filterNode"></el-tree>
       </div>
       <div class="output">
@@ -74,7 +74,7 @@
             </dd>
           </dl>
         </div>
-        <div class="kv">
+        <!-- <div class="kv">
           <dl v-for="(val, key) in lang.en" :key="key">
             <dt><em>{{key}}</em></dt>
             <dd>
@@ -100,8 +100,8 @@
               </ul>
             </dd>
           </dl>
-        </div>
-        <el-dialog
+        </div> -->
+        <!-- <el-dialog
           width="500px"
           :visible.sync="dialogShowVisible">
           <div class="dialog-title" slot="title">{{currentModule}}: <em>添加子项</em></div>
@@ -120,7 +120,7 @@
             <el-button size="small" type="primary" :loading="isSubmit" @click="addItem">确定</el-button>
             <el-button size="small" type="info" @click="dialogShowVisible = false">取消</el-button>
           </div>
-        </el-dialog>
+        </el-dialog> -->
       </section>
       
     </div>
@@ -138,7 +138,7 @@ import { defineComponent, onMounted, reactive ,toRefs,watch } from 'vue'
 export default defineComponent({
 
   setup(props, ctx) {
-    const data = reactive({
+    const state = reactive({
       form:{
         key:'',
         enValue:'',
@@ -187,7 +187,7 @@ export default defineComponent({
     //   this.treeInit();
     //   this.contextMenuInit();
     // };
-    function aboutMe(){
+  function aboutMe(){
     event.preventDefault();
     shell.openExternal('https://github.com/artskin/i18n-tools');
   }
@@ -205,53 +205,51 @@ export default defineComponent({
     }
     targetEl.scrollIntoView()//{behavior:"smooth"}
   }
-  function treeInit(){
-    let self = this;
-    this.treeData = [];
-    let treeJson = JSON.parse(JSON.stringify(this.lang.zh))
+
+  const entryFile= (e) => {
+    let getfile = e.target.files[0]
+    let fileName = getfile.name
+    let langName = fileName.substr(0, fileName.lastIndexOf('.'))
+
+    state.langFile[langName].file = fileName;
+    state.langFile[langName].name = langName;
+
+    fs.readFile(getfile.path, 'utf-8', (err, result) => {
+      let toJson = result.substring(result.indexOf('{'))
+      if (err) {
+        console.log('出错',err)// eslint-disable-line
+      } else {
+        state.lang[langName] = JSON.parse(toJson)
+        treeInit(langName,JSON.parse(toJson))
+      }
+    })
+    // console.log(fs.readFileSync(getfile.path).toString())
+    // let result = JSON.parse(fs.readFileSync(getfile.path))
+    // console.log(result)
+    //ipcRenderer.send('open-file-dialog')
+  }
+  const treeInit =(lang,treeData)=>{
+    state.treeData = [];
+    let treeJson = JSON.parse(JSON.stringify(treeData))
+    //console.log(state.treeData)
     getJsonData(treeJson)
     function getJsonData(jsonData,key){
+      //console.log(jsonData,)
       Object.entries(jsonData).map((item)=>{
-        let itemObj = {
-          label:item[0]
-        }
+        console.log(item,typeof item[1])
+        
         if(typeof item[1] == 'object'){
-          self.treeData.push(itemObj)
+          let treeItem = {
+            label:item[0],
+            value:''
+          }
+          state.treeData.push(treeItem)
         }
       })
+      console.log(state.treeData)
     }
   }
-
-  const method = {
-    entryFile: (e) => {
-      console.log(this)
-      console.log(e)
-      let getfile = e.target.files[0]
-      let fileName = getfile.name
-      let langName = fileName.substr(0, fileName.lastIndexOf('.'))
-      //console.log(fileName)
-      data.langFile[langName].file = fileName;
-      data.langFile[langName].name = langName;
-      fs.readFile(getfile.path, 'utf-8', (err, data) => {
-        //console.log(typeof data)
-        let toJson = data.substring(data.indexOf('{'))
-        //console.log(toJson)
-        if (err) {
-          console.log(err)// eslint-disable-line
-        } else {
-          // console.log(data)// eslint-disable-line
-          data.lang[langName] = JSON.parse(toJson)
-          // console.log(JSON.parse(data))
-          // console.log(Object.keys(this.lang[langName]))
-          this.treeInit()
-        }
-      })
-      // console.log(fs.readFileSync(getfile.path).toString())
-      // let result = JSON.parse(fs.readFileSync(getfile.path))
-      // console.log(result)
-      //ipcRenderer.send('open-file-dialog')
-    }
-  }
+  
   
   function selectFile (e) {
     //ipcRenderer.send('open-file-dialog')
@@ -314,8 +312,12 @@ export default defineComponent({
   }
 
     return {
-      ...toRefs(data),
-      ...method,
+      ...toRefs(state),
+      entryFile,
+      treeInit,
+      clickLocalNode,
+      creatMenu,
+      filterNode
     }
   }
 // filterText(val) {
