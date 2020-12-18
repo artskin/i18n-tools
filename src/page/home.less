@@ -133,9 +133,11 @@ body{
   }
   section{
     overflow-y: auto;
+    display: flex;
     padding-left: 10px;
     padding-right: 5px;
     height: calc(100% - 59px);
+    
     //scroll-behavior: instant;//smooth
     .nodata{
       padding: 40px;
@@ -198,13 +200,18 @@ ul{list-style: none;}
   em{color: teal;opacity: .8;}
   dl{
     position: relative;
+    margin: 0;
     &:nth-child(even){
       background: #f5f6f9;
     }
     dt{
       width: 100%;
-      padding: 8px 8px 4px 8px;
       line-height: 1.4;
+      
+      em{
+        display: inline-block;
+        padding: 5px;
+      }
     }
     dd{
       padding-bottom: 10px;
@@ -222,12 +229,12 @@ ul{list-style: none;}
         }
       }
       ul{
-        padding-left: 20px;
+        padding-left: 10px;
+        margin: 0;
         em{font-size: 12px;opacity: 0.5;}
       }
       .child-item{
         li{
-          display: flex;
           align-items: center;
           em{
             padding: 4px;
@@ -249,6 +256,7 @@ ul{list-style: none;}
     padding: 4px 8px;
     line-height: 1.6;
     border-radius: 0px;
+    background: #fffff1;
     &:focus{
       outline: 1px solid #9d9d9d;
       outline-offset: -1px;

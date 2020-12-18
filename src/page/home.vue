@@ -51,8 +51,8 @@
           <dl v-for="(val, key) in lang.zh" :key="key">
             <dt :ref="key" :name="key"><em v-text="key" @input="key = $event.target.innerText"></em></dt>
             <dd>
-              <div v-if="typeof lang.zh[key] == 'string'">
-                <label></label>
+              <div v-if="typeof val == 'string'">
+                <!-- <label></label> -->
                 <textarea :class="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key]"></textarea>
               </div>
               <ul v-else>
@@ -64,7 +64,7 @@
                   <div v-else class="child-item">
                     <ul>
                       <li v-for="(childitem, n) in lang.zh[key][index]" :key="n">
-                        <em>{{n}}</em>
+                        <em>{{n}}</em><br>
                         <textarea :class="index" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.zh[key][index][n]"></textarea>
                       </li>
                     </ul>
@@ -74,12 +74,12 @@
             </dd>
           </dl>
         </div>
-        <!-- <div class="kv">
+        <div class="kv">
           <dl v-for="(val, key) in lang.en" :key="key">
             <dt><em>{{key}}</em></dt>
             <dd>
               <div v-if="typeof lang.en[key] == 'string'">
-                <label for=""></label>
+                <!-- <label for=""></label> -->
                 <textarea style="resize:none" :class="key" v-tresize="changed" placeholder="请输入" autoHeight="true" v-model="lang.en[key]"></textarea>
               </div>
               <ul v-else>
@@ -100,7 +100,7 @@
               </ul>
             </dd>
           </dl>
-        </div> -->
+        </div>
         <!-- <el-dialog
           width="500px"
           :visible.sync="dialogShowVisible">
@@ -134,9 +134,8 @@ const { Menu, MenuItem } = remote
 const shell = require('electron').shell
 const fs = require('fs')
 
-import { defineComponent, onMounted, reactive ,toRefs,watch } from 'vue'
+import { defineComponent, onMounted, reactive ,toRefs,watch,ref } from 'vue'
 export default defineComponent({
-
   setup(props, ctx) {
     const state = reactive({
       form:{
@@ -195,27 +194,40 @@ export default defineComponent({
     if (!value) return true;
     return data.label.indexOf(value) !== -1;
   }
-  function clickLocalNode(data,node,key){
-    let itemName = data.label;
-    let targetEl
-    if(this.$refs[itemName].length>0){
-      targetEl = this.$refs[itemName][0]
-    }else{
-      targetEl = this.$refs[itemName]
-    }
-    targetEl.scrollIntoView()//{behavior:"smooth"}
+  function clickLocalNode(data,node){
+    console.log(data,node)
+    //let itemName = data.label;
+    //data.label = ref(null).value;
+
+    //console.log(data.label)
+    //let targetEl = itemName
+
+    // if(this.$refs[itemName].length>0){
+    //   targetEl = this.$refs[itemName][0]
+    // }else{
+    //   targetEl = this.$refs[itemName]
+    // }
+    //targetEl.scrollIntoView()//{behavior:"smooth"}
   }
 
   const entryFile= (e) => {
     let getfile = e.target.files[0]
-    let fileName = getfile.name
-    let langName = fileName.substr(0, fileName.lastIndexOf('.'))
+    // console.log(getfile)
+    let fileName = getfile.name;
+    let langName = ''
+    if(fileName.includes('zh') || fileName.includes('cn') || getfile.path.includes('zh')){
+      langName = 'zh'
+    }
+    if(fileName.includes('en') || fileName.includes('EN') || getfile.path.includes('en')){
+      langName = 'en'
+    }
 
     state.langFile[langName].file = fileName;
     state.langFile[langName].name = langName;
 
     fs.readFile(getfile.path, 'utf-8', (err, result) => {
       let toJson = result.substring(result.indexOf('{'))
+      console.log(toJson);
       if (err) {
         console.log('出错',err)// eslint-disable-line
       } else {
@@ -236,7 +248,7 @@ export default defineComponent({
     function getJsonData(jsonData,key){
       //console.log(jsonData,)
       Object.entries(jsonData).map((item)=>{
-        console.log(item,typeof item[1])
+        //console.log(item,typeof item[1])
         
         if(typeof item[1] == 'object'){
           let treeItem = {
@@ -292,13 +304,15 @@ export default defineComponent({
     this.contextMenu.popup({ window: remote.getCurrentWindow() })
   }
   function exportLang (currentlang) {
-    console.log(currentlang)
+    //console.log(this)
     let str = JSON.stringify(this.lang[currentlang.name], '', '\t')
+    let saveStr = `export default ${str}`
+    console.log(saveStr)
     ipcRenderer.send('save-dialog',currentlang.file)
     ipcRenderer.on('save-file', (event, path) => {
       if(!path.canceled){
         let filePath = path.filePath
-        fs.writeFile(filePath, str, 'utf-8', (err, data) => {
+        fs.writeFile(filePath, saveStr, 'utf-8', (err, data) => {
           if (err) throw err;
           console.log('文件已被保存');
           const notification = {
@@ -317,7 +331,8 @@ export default defineComponent({
       treeInit,
       clickLocalNode,
       creatMenu,
-      filterNode
+      filterNode,
+      exportLang
     }
   }
 // filterText(val) {

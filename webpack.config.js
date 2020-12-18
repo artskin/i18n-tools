@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
 const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
@@ -52,6 +53,7 @@ module.exports = {
         { from: "public"},
       ],
     }),
+    new webpack.SourceMapDevToolPlugin({})
   ],
   resolve: {
     alias: {
