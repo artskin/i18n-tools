@@ -83,13 +83,13 @@ const template = [
   }
 ]
 
-// const menu = Menu.buildFromTemplate(template)
-// Menu.setApplicationMenu(menu)
-// app.on('browser-window-created',(ev,win)=>{
-//   win.webContents.on('context-menu',(ev,params)=>{
-//     menu.popup(win,params.x,params.y)
-//   })
-// })
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
+app.on('browser-window-created',(ev,win)=>{
+  win.webContents.on('context-menu',(ev,params)=>{
+    menu.popup(win,params.x,params.y)
+  })
+})
 ipcMain.on('show-context-menu',(ev)=>{
   //const win = BrowserWindow.fromWebContents(event.sender)
   //menu.popup(win)

@@ -33,12 +33,12 @@
       </div>
       <div class="output">
         <!-- <button class="fixedlb" @click="exportLang">导出</button> -->
-        <p title="技术支持">with <a @click="aboutMe(this)" href="javascript:">♥</a> by MuFeng</p>
+        <p title="技术支持">with <a @click="aboutMe" href="javascript:">♥</a> by MuFeng</p>
       </div>
     </div>
     <div class="content">
       <!-- <h2>SenseGuard i18n-tools</h2> -->
-      <div class="main-heade">
+      <div class="main-header">
         <h3>中文包<span v-if="langFile.zh.name">: <span class="gray">{{langFile.zh.file}}</span> <button title="导出中文语言包" class="mini" @click="exportLang(langFile.zh)">➥导出</button></span></h3>
         <h3>英文包<span v-if="langFile.en.name">: <span class="gray">{{langFile.en.file}}</span> <button title="导出英文语言包" class="mini" @click="exportLang(langFile.en)">➥导出</button></span></h3>
       </div>
@@ -47,8 +47,8 @@
           请先导入语言包文件:<br>
           <span>支持.json，或json格式的(.js/.ts)文件。</span>
         </div>
-        <div class="kv">
-          <dl v-for="(val, key) in lang.zh" :key="key">
+        <div ref="kvList" class="kv">
+          <dl v-for="(val, key) in lang.zh" :key="key" :data-index="key">
             <dt :ref="key" :name="key"><em v-text="key" @input="key = $event.target.innerText"></em></dt>
             <dd>
               <div v-if="typeof val == 'string'">
@@ -75,7 +75,7 @@
           </dl>
         </div>
         <div class="kv">
-          <dl v-for="(val, key) in lang.en" :key="key">
+          <dl v-for="(val, key) in lang.en" :key="key" :data-index="key">
             <dt><em>{{key}}</em></dt>
             <dd>
               <div v-if="typeof lang.en[key] == 'string'">
@@ -181,10 +181,11 @@ export default defineComponent({
       dialogShowVisible:false
     });
     const regionRules = ref(null)
+    const kvList = ref(null)
 
     onMounted(()=> {
       //this.treeInit();
-      console.log(regionRules.value)
+      //console.log(regionRules.value)
       contextMenuInit();
     });
   function aboutMe(){
@@ -196,19 +197,12 @@ export default defineComponent({
     return data.label.indexOf(value) !== -1;
   }
   function clickLocalNode(data,node){
-    //console.log(data,node)
-    //let itemName = data.label;
-    //data.label = ref(null).value;
-
-    //console.log(data.label)
-    //let targetEl = itemName
-
-    // if(this.$refs[itemName].length>0){
-    //   targetEl = this.$refs[itemName][0]
-    // }else{
-    //   targetEl = this.$refs[itemName]
-    // }
-    //targetEl.scrollIntoView()//{behavior:"smooth"}
+    const kvEl = kvList.value
+    for(let el of kvEl.children){
+      if(el.dataset.index === data.label){
+        el.scrollIntoView()//{behavior:"smooth"}
+      }
+    }
   }
 
   const entryFile= (e) => {
@@ -225,7 +219,7 @@ export default defineComponent({
 
     state.langFile[langName].file = fileName;
     state.langFile[langName].name = langName;
-    console.log(state)
+    //console.log(state)
 
     fs.readFile(getfile.path, 'utf-8', (err, result) => {
       let toJson = result.substring(result.indexOf('{'))
@@ -259,7 +253,7 @@ export default defineComponent({
           state.treeData.push(treeItem)
         }
       })
-      console.log(state.treeData)
+      //console.log(state.treeData)
     }
   }
   
@@ -339,15 +333,17 @@ export default defineComponent({
       contextMenuInit,
       showAddItem,
       addItem,
-      regionRules
+      regionRules,
+      kvList,
+      aboutMe
     }
   }
 // filterText(val) {
 //       this.$refs.tree.filter(val);
 //     }
-  // watch(() => val,newVal => {
-  //   data.currentModule = newVal
-  // })
+// watch(() => val,newVal => {
+//   data.currentModule = newVal
+// })
 })
 </script>
 <style lang="less">
