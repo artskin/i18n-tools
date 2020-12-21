@@ -1,8 +1,8 @@
 {
-  "name": "electron11_demo",
-  "version": "1.0.0",
-  "description": "",
-  "author": "",
+  "name": "i18n-tools",
+  "version": "1.0.1",
+  "description": "Electron+Vue3",
+  "author": "amu",
   "license": "ISC",
   "main": "./main.js",
   "scripts": {

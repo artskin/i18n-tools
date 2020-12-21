@@ -101,10 +101,10 @@
             </dd>
           </dl>
         </div>
-        <!-- <el-dialog
+        <el-dialog
           width="500px"
-          :visible.sync="dialogShowVisible">
-          <div class="dialog-title" slot="title">{{currentModule}}: <em>添加子项</em></div>
+          v-model="dialogShowVisible">
+          <template class="dialog-title" v-slot:title>{{currentModule}}: <em>添加子项</em></template>
           <el-form :model="form" ref="regionRules" :rules="regionRules">
             <el-form-item label="key:" :label-width="formLabelWidth" prop="key">
               <el-input size="small" v-model="form.key" maxlength="40" autocomplete="off"></el-input>
@@ -116,11 +116,11 @@
               <el-input size="small" v-model="form.enValue" maxlength="100" autocomplete="off"></el-input>
             </el-form-item>
           </el-form>
-          <div slot="footer" class="dialog-footer">
+          <template v-slot:footer class="dialog-footer">
             <el-button size="small" type="primary" :loading="isSubmit" @click="addItem">确定</el-button>
             <el-button size="small" type="info" @click="dialogShowVisible = false">取消</el-button>
-          </div>
-        </el-dialog> -->
+          </template>
+        </el-dialog>
       </section>
       
     </div>
@@ -129,9 +129,8 @@
 </template>
 <script>
 const {ipcRenderer} = require('electron')
-const { remote } = require('electron')
+const { remote,shell } = require('electron')
 const { Menu, MenuItem } = remote
-const shell = require('electron').shell
 const fs = require('fs')
 
 import { defineComponent, onMounted, reactive ,toRefs,watch,ref } from 'vue'
@@ -181,11 +180,13 @@ export default defineComponent({
       contextMenu:new Menu(),
       dialogShowVisible:false
     });
+    const regionRules = ref(null)
 
-    // onMounted() {
-    //   this.treeInit();
-    //   this.contextMenuInit();
-    // };
+    onMounted(()=> {
+      //this.treeInit();
+      console.log(regionRules.value)
+      contextMenuInit();
+    });
   function aboutMe(){
     event.preventDefault();
     shell.openExternal('https://github.com/artskin/i18n-tools');
@@ -195,7 +196,7 @@ export default defineComponent({
     return data.label.indexOf(value) !== -1;
   }
   function clickLocalNode(data,node){
-    console.log(data,node)
+    //console.log(data,node)
     //let itemName = data.label;
     //data.label = ref(null).value;
 
@@ -224,10 +225,10 @@ export default defineComponent({
 
     state.langFile[langName].file = fileName;
     state.langFile[langName].name = langName;
+    console.log(state)
 
     fs.readFile(getfile.path, 'utf-8', (err, result) => {
       let toJson = result.substring(result.indexOf('{'))
-      console.log(toJson);
       if (err) {
         console.log('出错',err)// eslint-disable-line
       } else {
@@ -262,7 +263,6 @@ export default defineComponent({
     }
   }
   
-  
   function selectFile (e) {
     //ipcRenderer.send('open-file-dialog')
   }
@@ -270,29 +270,32 @@ export default defineComponent({
     // this.$refs[e.className][1].style.height = this.$refs[e.className][0].style.height
   }
   function contextMenuInit(){
-    this.contextMenu.append(new MenuItem({ label: '新建子项', click:()=> { this.showAddItem() } }))
+    state.contextMenu.append(new MenuItem({ label: '新建子项', click:()=> { showAddItem() } }))
     // this.contextMenu.append(new MenuItem({ type: 'separator' }))
     // this.contextMenu.append(new MenuItem({ label: '新建模块' }))
   }
   function showAddItem(){
-    this.dialogShowVisible = true;
+    state.dialogShowVisible = true;
   }
   function  addItem(){
-    let self = this;
-    this.$refs.regionRules.validate((valid) => {
+    let regionEl = regionRules.value
+    
+    regionEl.validate((valid) => {
       if (valid) {
-        this.isSubmit = true;
-        if(this.lang && this.lang.zh){
-          console.log(this.lang.zh[this.currentModule])
-          this.lang.zh[this.currentModule][this.form.key] = this.form.zhValue
+        state.isSubmit = true;
+        console.log(state.langFile)
+        if(state.lang && state.lang.zh && state.langFile.zh.file){
+          console.log(state.lang.zh[state.currentModule])
+          state.lang.zh[state.currentModule][state.form.key] = state.form.zhValue
         }
-        if(this.lang && this.lang.en){
-          console.log(this.lang)
-          this.lang.en[this.currentModule][this.form.key] = this.form.enValue
+        if(state.lang && state.lang.en && state.langFile.en.file){
+          console.log(state.lang)
+          state.lang.en[state.currentModule][state.form.key] = state.form.enValue
         }
         setTimeout(()=>{
-          this.isSubmit = false;
-          this.dialogShowVisible = false
+          state.isSubmit = false;
+          state.dialogShowVisible = false
+          console.log(state.lang)
         },100)
       }
     })
@@ -300,8 +303,8 @@ export default defineComponent({
   function creatMenu(ev,data,node,self){
     ev.preventDefault()
     //console.log(ev,data,node,self)
-    this.currentModule = data.label
-    this.contextMenu.popup({ window: remote.getCurrentWindow() })
+    state.currentModule = data.label
+    state.contextMenu.popup({ window: remote.getCurrentWindow() })
   }
   function exportLang (currentlang) {
     //console.log(this)
@@ -332,7 +335,11 @@ export default defineComponent({
       clickLocalNode,
       creatMenu,
       filterNode,
-      exportLang
+      exportLang,
+      contextMenuInit,
+      showAddItem,
+      addItem,
+      regionRules
     }
   }
 // filterText(val) {
@@ -341,9 +348,6 @@ export default defineComponent({
   // watch(() => val,newVal => {
   //   data.currentModule = newVal
   // })
-
- 
-
 })
 </script>
 <style lang="less">
