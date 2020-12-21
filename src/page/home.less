@@ -201,9 +201,6 @@ ul{list-style: none;}
   dl{
     position: relative;
     margin: 0;
-    &:nth-child(even){
-      background: #f5f6f9;
-    }
     dt{
       width: 100%;
       line-height: 1.4;
@@ -216,6 +213,7 @@ ul{list-style: none;}
     dd{
       padding-bottom: 10px;
       padding-right: 10px;
+      margin-left: 10px;
       &>div{
         display: flex;
         label{
@@ -229,15 +227,55 @@ ul{list-style: none;}
         }
       }
       ul{
-        padding-left: 10px;
+        padding-left: 25px;
         margin: 0;
+        position: relative;
         em{font-size: 12px;opacity: 0.5;}
+        &::before{
+          content: '';
+          display: block;
+          position: absolute;
+          height: 100%;
+          width: 0;
+          border-left: 1px dashed #ccc;
+          z-index: 0;
+          left: 5px;
+        }
+        li{
+          position: relative;
+          &::before{
+            content: '';
+            display: block;
+            position: absolute;
+            height: 0;
+            width: 16px;
+            border-bottom: 1px dashed #ccc;
+            z-index: 0;
+            top:  12px;
+            left: -18px;
+          }
+
+          &:last-child{
+            &::after{
+              content: '';
+              display: block;
+              position: absolute;
+              height: calc(100% - 13px);
+              width: 2px;
+              border-left: 2px solid #fff;
+              z-index: 1;
+              top: 13px;
+              left: -21px;
+            }
+          }
+        }
       }
       .child-item{
+        margin-left: 2px;
         li{
           align-items: center;
           em{
-            padding: 4px;
+            //padding: 4px;
             display: inline-block;
             width: 60px;
             text-align: right;
@@ -245,7 +283,18 @@ ul{list-style: none;}
         }
       }
     }
+    &:nth-child(even){
+      background: #f5f6f9;
+      dd ul li{
+        &:last-child{
+          &::after{
+            border-left: 2px solid #f5f6f9;
+          }
+        }
+      }
+    }
   }
+  
   textarea{
     width: 96%;
     resize: vertical;

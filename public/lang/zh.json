@@ -14,11 +14,12 @@
 		"labelAttendance":"考勤",
 		"labelRetrieval":"记录",
 		"labelVisitor":"访客",
-		"labelSettings":"配置",
-		"listSettingsMap":"地图管理",
-		"listSettingsDevice":"设备管理",
-		"listSettingsLibrary":"人像库管理",
-		"listSettingsRule":"规则管理"
+		"labelSettings":{
+      "listSettingsMap":"地图管理",
+      "listSettingsDevice":"设备管理",
+      "listSettingsLibrary":"人像库管理",
+      "listSettingsRule":"规则管理"
+    }
 	}
 }
 
