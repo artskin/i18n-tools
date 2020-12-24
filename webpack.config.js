@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
 const CopyPlugin = require("copy-webpack-plugin");
+const name="i18n-Tool"
 module.exports = {
   entry:{
     "bundle":'./src/index.js',
@@ -53,7 +54,10 @@ module.exports = {
         { from: "public"},
       ],
     }),
-    new webpack.SourceMapDevToolPlugin({})
+    new webpack.SourceMapDevToolPlugin({}),
+    new webpack.HotModuleReplacementPlugin({
+      // Options...
+    })
   ],
   resolve: {
     alias: {

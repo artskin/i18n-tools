@@ -9,7 +9,7 @@
     "dev": "webpack serve --config webpack.config.js",
     "build": "webpack --config webpack.config.js",
     "serve": "./node_modules/.bin/webpack --config webpack.config.js",
-    "start": "electron .",
+    "start": "npx electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "dist2": "npx electron-renderer",
